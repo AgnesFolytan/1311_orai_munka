@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode } from '@nestjs/common';
+import { Controller, Get, Post, Body, Patch, Param, Delete, NotFoundException, HttpCode, Query } from '@nestjs/common';
 import { SongsService } from './songs.service';
 import { CreateSongDto } from './dto/create-song.dto';
 import { UpdateSongDto } from './dto/update-song.dto';
@@ -15,6 +15,21 @@ export class SongsController {
   @Get()
   findAll() {
     return this.songsService.findAll();
+  }
+
+  @Get('top')
+  topSong(@Query('count') count: number = 10){
+    return this.songsService.topSongs(+count)
+  }
+
+  @Get('free')
+  findFree(){
+    return this.songsService.findFree()
+  }
+
+  @Get('popularArtists')
+  async popularArtists(){
+    return this.songsService.popularArtists()
   }
 
   @Get(':id')
@@ -39,4 +54,5 @@ export class SongsController {
       throw new NotFoundException('No song with this ID' + id);
     }
   }
+
 }

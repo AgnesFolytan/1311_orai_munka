@@ -17,6 +17,7 @@ model Song {
   id Int @id @default(autoincrement())
   title String
   author String
-  lenght Int @db.Int
-  price Int @db.Int
+  lenght Int
+  price Int
+  rating Int
 }

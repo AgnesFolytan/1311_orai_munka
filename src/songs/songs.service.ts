@@ -3,6 +3,7 @@ import { CreateSongDto } from './dto/create-song.dto';
 import { UpdateSongDto } from './dto/update-song.dto';
 import { PrismaService } from 'src/prisma.service';
 import { Song } from './entities/song.entity';
+import { count } from 'console';
 
 @Injectable()
 export class SongsService {
@@ -12,49 +13,68 @@ export class SongsService {
     this.db = db;
   }
 
-  song: Song[] = [
-    {
-      id: 1,
-      title: "első szám",
-      author:  "első előadó",
-      lenght: 126,
-      price: 0,
-    },
-    {
-      id: 2,
-      title: "második szám",
-      author:  "második előadó",
-      lenght: 241,
-      price: 1500,
-    },
-    {
-      id: 3,
-      title: "hamradik  szám",
-      author:  "harmadik előadó",
-      lenght: 513,
-      price: 235,
-    },
-  ];
-
-  NextId = this.song.length;
-  
   create(createSongDto: CreateSongDto) {
-    return 'This action adds a new song';
+    return this.db.song.create({
+      data: createSongDto
+    })
   }
 
-  findAll() {
-    return `This action returns all songs`;
+  async findAll() {
+    return await this.db.song.findMany();
   }
 
   findOne(id: number) {
-    return `This action returns a #${id} song`;
+    return this.db.song.findUnique({
+      where: {
+        id
+      }
+    });
   }
 
-  update(id: number, updateSongDto: UpdateSongDto) {
-    return `This action updates a #${id} song`;
+  async update(id: number, updateSongDto: UpdateSongDto) {
+    try{
+      return this.db.song.update({
+        where: {id},
+        data: updateSongDto
+      })
+    } catch {
+      return undefined;
+    }
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} song`;
+  async remove(id: number) {
+    try{
+      return await this.db.song.delete({
+        where : {
+          id
+        }
+      })
+    } catch {
+      return undefined;
+    }
+  }
+
+  findFree(){
+    return this.db.song.findMany({
+      where: {
+        price: 0
+      }
+    })
+  }
+
+  topSongs(count: number){
+    return this.db.song.findMany({
+      orderBy: {
+        rating: 'desc'
+      },
+      take: count
+    })
+  }
+
+  async popularArtists(){
+    const response = await this.db.song.groupBy({
+      by: ['author'], _count: {author: true}, orderBy: {_count: {author: 'desc'}}
+    })
+    return response.map(x => 'artist: ' + x.author + ', numberOfSongs: ' + x._count.author)
   }
 }
