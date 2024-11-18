@@ -20,9 +20,12 @@ model Song {
   lenght Int
   price Int
   rating Int
+
+  Playlist Playlist[]
 }
 
 model Playlist {
   id Int @id @default(autoincrement())
   name String
+  songs Song[]
 }

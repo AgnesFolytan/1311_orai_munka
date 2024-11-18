@@ -18,14 +18,19 @@ export class PlaylistController {
     return this.playlistService.findAll();
   }
 
+  @Post(':listid/:songid')
+  addSong(@Param('listid') listid: string, @Param('songid') songid: string){
+    return this.playlistService.addSong(+listid, +songid)
+  }
+
+  @Delete(':listid/:songid')
+  deleteSong(@Param('listid') listid: string, @Param('songid') songid: string){
+    return this.playlistService.deleteSong(+listid, +songid)
+  }
+
   @Get(':id')
   findOne(@Param('id') id: string) {
     return this.playlistService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updatePlaylistDto: UpdatePlaylistDto) {
-    return this.playlistService.update(+id, updatePlaylistDto);
   }
 
   @Delete(':id')
